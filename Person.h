@@ -13,10 +13,10 @@ public:
         m_number(0)
     {}
 
-    Address(const std::string& street, int number, const std::string& city) :
-        m_street(street),
-        m_city(city),
-        m_number(number)
+    Address(const std::string& street, int number, const std::string& city)
+        : m_street(street)
+        , m_city(city)
+        , m_number(number)
     {}
 
     friend FileStorage& operator<<(FileStorage& fs, const Address& a) {
@@ -37,10 +37,10 @@ class Person {
 public:
     Person() = default;
 
-    Person(const std::string& name, const bool female, const Address& address) :
-        m_name(name),
-        m_address(address),
-        m_female(female)
+    Person(const std::string& name, const bool female, const Address& address)
+        : m_name(name)
+        , m_address(address)
+        , m_female(female)
     {}
 
     friend FileStorage& operator<<(FileStorage& fs, const Person& p) {

@@ -3,6 +3,8 @@
 #include "FileNode.h"
 #include <functional>
 
+using Func = std::function<FileStorage&(FileStorage&)>;
+
 constexpr int IndentWidth = 4;
 
 class FileStorage {
@@ -22,17 +24,17 @@ public:
 
     FileStorage() = delete;
 
-    FileStorage(std::ostream& os) :
-        m_os(os),
-        m_writing(true)
+    FileStorage(std::ostream& os)
+        : m_os(os)
+        , m_writing(true)
     {
         objectBegin(*this);
     }
 
-    FileStorage(const std::string& fileName, bool read) :
-        m_ofs(read ? std::ofstream() : std::ofstream(fileName)),
-        m_os(m_ofs),
-        m_writing(!read)
+    FileStorage(const std::string& fileName, bool read)
+        : m_ofs(read ? std::ofstream() : std::ofstream(fileName))
+        , m_os(m_ofs)
+        , m_writing(!read)
     {
         if(m_writing) objectBegin(*this);
     }
