@@ -13,6 +13,11 @@ int main() {
 
         fs1 << "hanspi" << hanspi;
         fs1 << "moni" << moni;
+
+        FileStorage fs2("fs.txt", FileStorage::Write);
+
+        fs2 << "hanspi" << hanspi;
+        fs2 << "moni" << moni;
     } catch (std::exception& ex) {
         std::cerr << "Error: " << ex.what() << std::endl;
     }

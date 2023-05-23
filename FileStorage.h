@@ -5,6 +5,7 @@
 #include <exception>
 #include <cassert>
 #include <functional>
+#include <fstream>
 
 class FileStorage;
 
@@ -15,6 +16,7 @@ using Key = std::string;
 constexpr int IndentWidth = 4;
 
 class FileStorage {
+    std::ofstream m_ofs;
     std::ostream& m_os;
     int m_indentLevel = 0;
     bool m_writing;
@@ -22,6 +24,9 @@ class FileStorage {
     bool m_firstKey = true;    // true: first key of an object
 
 public:
+    static constexpr bool Read = true;
+    static constexpr bool Write = false;
+
     friend FileStorage& objectBegin(FileStorage& fs);
     friend FileStorage& objectEnd(FileStorage& fs);
 
@@ -32,6 +37,14 @@ public:
         m_writing(true)
     {
         objectBegin(*this);
+    }
+
+    FileStorage(const std::string& fileName, bool read) :
+        m_ofs(read ? std::ofstream() : std::ofstream(fileName)),
+        m_os(m_ofs),
+        m_writing(!read)
+    {
+        if(m_writing) objectBegin(*this);
     }
 
     ~FileStorage() {
@@ -74,7 +87,6 @@ public:
         return f(*this);
     }
 
-private:
     void release() {
         if (m_writing) {
             m_os << std::endl;
@@ -83,6 +95,7 @@ private:
         }
     }
 
+private:
     bool checkKey(const Key& key) {
         for(auto c : key) {
             if((c < 'A' || c > 'Z') && (c < 'a' || c > 'z'))
