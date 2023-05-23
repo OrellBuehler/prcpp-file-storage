@@ -12,8 +12,11 @@ using Func = std::function<FileStorage&(FileStorage&)>;
 
 using Key = std::string;
 
+constexpr int IndentWidth = 4;
+
 class FileStorage {
     std::ostream& m_os;
+    int m_indentLevel = 0;
     bool m_writing;
     bool m_keyExpected = true; // true: next output is a key
     bool m_firstKey = true;    // true: first key of an object
@@ -28,7 +31,7 @@ public:
         m_os(os),
         m_writing(true)
     {
-        m_os << '{' << std::endl;
+        objectBegin(*this);
     }
 
     ~FileStorage() {
@@ -48,7 +51,9 @@ public:
             }
 
             //write key
+            indent();
             m_os << s << ": ";
+
             m_keyExpected = false;
         } else {
             // output a string value
@@ -72,7 +77,8 @@ public:
 private:
     void release() {
         if (m_writing) {
-            m_os << std::endl << '}' << std::endl;
+            m_os << std::endl;
+            objectEnd(*this);
             m_os.flush();
         }
     }
@@ -84,10 +90,19 @@ private:
         }
         return true;
     }
+
+    void indent() {
+        if (m_indentLevel > 0) m_os << std::endl;
+        for(int i = 0; i < m_indentLevel * IndentWidth; i++) {
+            m_os << ' ';
+        }
+    }
 };
 
 inline FileStorage& objectBegin(FileStorage& fs) {
+    fs.indent();
     fs.m_os << '{';
+    fs.m_indentLevel++;
     fs.m_keyExpected = true;
     fs.m_firstKey = true;
     return fs;
@@ -95,6 +110,8 @@ inline FileStorage& objectBegin(FileStorage& fs) {
 
 inline FileStorage& objectEnd(FileStorage& fs) {
     assert(fs.m_keyExpected == true);
+    fs.m_indentLevel--;
+    fs.indent();
     fs.m_os << '}';
     fs.m_firstKey = false;
     return fs;
