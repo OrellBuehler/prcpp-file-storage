@@ -37,9 +37,10 @@ class Person {
 public:
     Person() = default;
 
-    Person(const std::string& name, const bool m_female, const Address& address) :
+    Person(const std::string& name, const bool female, const Address& address) :
         m_name(name),
-        m_address(address)
+        m_address(address),
+        m_female(female)
     {}
 
     friend FileStorage& operator<<(FileStorage& fs, const Person& p) {

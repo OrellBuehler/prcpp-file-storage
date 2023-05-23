@@ -1,17 +1,7 @@
 #pragma once
 
-#include <string>
-#include <iostream>
-#include <exception>
-#include <cassert>
+#include "FileNode.h"
 #include <functional>
-#include <fstream>
-
-class FileStorage;
-
-using Func = std::function<FileStorage&(FileStorage&)>;
-
-using Key = std::string;
 
 constexpr int IndentWidth = 4;
 
